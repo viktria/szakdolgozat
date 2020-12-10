@@ -1,0 +1,542 @@
+#python
+
+#genomok letöltése,egyszerűbb kezelhetőség miatt átnevezése
+%%bash
+
+#Pygoscelis adeliae
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/699/105/GCF_000699105.1_ASM69910v1/GCF_000699105.1_ASM69910v1_genomic.fna.gz
+
+#Corynebacterium spheniscorum
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/900/113/445/GCF_900113445.1_IMG-taxon_2599185219_annotated_assembly/GCF_900113445.1_IMG-taxon_2599185219_annotated_assembly_genomic.fna.gz
+
+#Corynebacterium sphenisci
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/001/941/505/GCF_001941505.1_ASM194150v1/GCF_001941505.1_ASM194150v1_genomic.fna.gz
+
+#Chlamydia psittaci
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/204/255/GCF_000204255.1_ASM20425v1/GCF_000204255.1_ASM20425v1_genomic.fna.gz
+
+#Porphyromonas endodontalis
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/174/815/GCF_000174815.1_ASM17481v1/GCF_000174815.1_ASM17481v1_genomic.fna.gz
+
+#Actinomyces urogenitalis
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/159/035/GCF_000159035.1_ASM15903v1/GCF_000159035.1_ASM15903v1_genomic.fna.gz
+
+#Gleimia europaea
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/411/155/GCF_000411155.1_Acti_euro_ACS-120-V-COL10B_V1/GCF_000411155.1_Acti_euro_ACS-120-V-COL10B_V1_genomic.fna.gz
+
+#Mobiluncus mulieris
+wget https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/160/615/GCF_000160615.1_ASM16061v1/GCF_000160615.1_ASM16061v1_genomic.fna.gz
+
+#BWA INDEX
+export PATH=$PATH:/data/tools/bwa
+bwa index -p PENGUIN_BWA adelie.fna
+
+#BOWTIE2 INDEX
+export PATH=$PATH:/data/tools/bowtie2-2.3.5-linux-x86_64
+bowtie2-build adelie.fna PENGUIN_BWT
+
+#minták generálása
+#minőség az egyes mintáknál
+adelie.fna
+1)
+maxq=36 \
+midq=32 \
+minq=28
+2)
+maxq=36 \
+midq=25 \
+minq=18
+3)
+maxq=40 \
+midq=15 \
+minq=10
+4)
+maxq=25 \
+midq=15 \
+minq=5
+
+cpsittaci.fna
+1)
+maxq=40 \
+midq=28 \
+minq=24
+2)
+maxq=36 \
+midq=27 \
+minq=15
+3)
+maxq=38 \
+midq=19 \
+minq=8
+4)
+maxq=23 \
+midq=17 \
+minq=4
+
+cspheniscorum.fna
+1)
+maxq=37 \
+midq=31 \
+minq=21
+2)
+maxq=32 \
+midq=24 \
+minq=17
+3)
+maxq=36 \
+midq=17 \
+minq=11
+4)
+maxq=21 \
+midq=16 \
+minq=6
+
+mmulieris.fna
+1)
+maxq=35 \
+midq=28 \
+minq=27
+2)
+maxq=29 \
+midq=20 \
+minq=13
+3)
+maxq=39 \
+midq=17 \
+minq=13
+4)
+maxq=32 \
+midq=14 \
+minq=8
+
+aurogenitas.fna
+1)
+maxq=36 \
+midq=32 \
+minq=23
+2)
+maxq=34 \
+midq=25 \
+minq=18
+3)
+maxq=40 \
+midq=19 \
+minq=10
+4)
+maxq=25 \
+midq=14 \
+minq=5
+
+csphenisci.fna
+1)
+maxq=36 \
+midq=27 \
+minq=15
+2)
+maxq=23 \
+midq=17 \
+minq=4
+3)
+maxq=40 \
+midq=28 \
+minq=24
+4)
+maxq=38 \
+midq=19 \
+minq=8
+
+geuropaea.fna
+1)
+maxq=38 \
+midq=19 \
+minq=8
+2)
+maxq=23 \
+midq=17 \
+minq=4
+3)
+maxq=36 \
+midq=27 \
+minq=15
+4)
+maxq=40 \
+midq=28 \
+minq=24
+
+pendodentalis.fna
+1)
+maxq=39 \
+midq=17 \
+minq=13
+2)
+maxq=32 \
+midq=14 \
+minq=8
+3)
+maxq=29 \
+midq=20 \
+minq=13
+4)
+maxq=35 \
+midq=28 \
+minq=27
+
+#összevont minta adatai
+#random számok a mintákhoz
+#1. minta
+set.seed(5)
+rb_1 <- sort(sample.int(70000, 8000)) #bacik
+rp_1 <- sort(sample.int(10000, 2000)) #pingvin
+
+#2.minta
+set.seed(3)
+rb_2 <- sort(sample.int(70000, 5000)) #bacik
+rp_2 <- sort(sample.int(10000, 5000)) #pingvin
+
+#3.minta
+set.seed(4)
+rb_3 <- sort(sample.int(70000, 7000)) #bacik
+rp_3 <- sort(sample.int(10000, 3000)) #pingvin
+
+#4.minta
+set.seed(8)
+rb_4 <- sort(sample.int(70000, 4000)) #bacik
+rp_4 <- sort(sample.int(10000, 6000)) #pingvin
+
+
+
+#single
+#a fent szereplő minőségi adatok mindegyikével külön lefuttattam
+%%bash 
+export PATH=$PATH:/data/tools/bbmap
+
+randomreads.sh ref=../pendodentalis.fna    out=endo_4.fq \
+paired=f \
+seed=4 \
+maxlength=150 \
+minlength=50 \
+reads=10000 \
+snprate=0.05 \
+maxsnps=3 \
+insrate=0.01 \
+maxinss=2 \
+maxinslen=4 \
+delrate=0.001 \
+maxdels=4 \
+maxdellen=4 \
+nrate=0.1 \
+maxns=10 \
+maxq=35 \
+midq=28 \
+minq=27
+
+#minták átnevezése
+s *.fq> filename_s.txt
+#R
+library(ShortRead)
+setwd!
+
+txt=c()
+g=c()
+txt = read.delim('filename_s.txt',header=FALSE)
+z = nrow(txt)
+for (j in 1:z){
+    fq=readFastq(txt[j,1])
+    ss = as.character(id(fq))
+    n = length(ss)
+    x=c()
+    x[1]=paste0(txt[j,1], '_1')
+        for (i in 2:n){
+        x[i]=paste0(txt[j,1],'_',i)}
+    ss=x 
+    bs = BStringSet(ss)
+    new_fq = ShortReadQ(sread=sread(fq), quality=quality(fq), id=bs)
+    
+    writeFastq(object=new_fq,file=paste0("rename_",txt[j,1]),"a",compress=FALSE)}
+
+#minták összevonása
+#R
+#1.minta
+setwd("/data/kelvi1/thesis/adelie/reads/single/peng")
+peng <- readFastq('rename_peng_1.fq')
+setwd("/data/kelvi1/thesis/adelie/reads/single/")
+bact <- readFastq('/data/kelvi1/thesis/adelie/reads/single/samp_1')
+
+bact_sel = bact[rb_1]
+peng_sel = peng[rp_1]
+
+writeFastq(object=bact_sel,file="sample_1.fq","a",compress=FALSE)
+writeFastq(object=peng_sel,file="sample_1.fq","a",compress=FALSE)
+
+#2.minta
+setwd("/data/kelvi1/thesis/adelie/reads/single/peng")
+peng <- readFastq('rename_peng_2.fq')
+setwd("/data/kelvi1/thesis/adelie/reads/single/")
+bact <- readFastq('/data/kelvi1/thesis/adelie/reads/single/samp_2')
+
+bact_sel = bact[rb_2]
+peng_sel = peng[rp_2]
+
+writeFastq(object=bact_sel,file="sample_2.fq","a",compress=FALSE)
+writeFastq(object=peng_sel,file="sample_2.fq","a",compress=FALSE)
+
+#3.minta
+setwd("/data/kelvi1/thesis/adelie/reads/single/peng")
+peng <- readFastq('rename_peng_3.fq')
+setwd("/data/kelvi1/thesis/adelie/reads/single/")
+bact <- readFastq('/data/kelvi1/thesis/adelie/reads/single/samp_3')
+
+bact_sel = bact[rb_3]
+peng_sel = peng[rp_3]
+
+writeFastq(object=bact_sel,file="sample_3.fq","a",compress=FALSE)
+writeFastq(object=peng_sel,file="sample_3.fq","a",compress=FALSE)
+
+#4.minta
+setwd("/data/kelvi1/thesis/adelie/reads/single/peng")
+peng <- readFastq('rename_peng_4.fq')
+setwd("/data/kelvi1/thesis/adelie/reads/single/")
+bact <- readFastq('/data/kelvi1/thesis/adelie/reads/single/samp_4')
+
+bact_sel = bact[rb_4]
+peng_sel = peng[rp_4]
+
+writeFastq(object=bact_sel,file="sample_4.fq","a",compress=FALSE)
+writeFastq(object=peng_sel,file="sample_4.fq","a",compress=FALSE)
+
+#FastQC
+%%bash 
+
+export PATH=$PATH:/data/tools/FastQC
+
+fastqc *.fq -t 19 -o fastQC
+
+multiqc -n -p 'multi_qc_raw' fastQC
+
+#Illesztés
+#BWA
+%%bash 
+
+export PATH=$PATH:/data/tools/bwa
+
+bwa mem ../BWA/PENGUIN_BWA sample_1.fq > bwa_align/illesztes_1.sam
+bwa mem ../BWA/PENGUIN_BWA sample_2.fq > bwa_align/illesztes_2.sam
+bwa mem ../BWA/PENGUIN_BWA sample_3.fq > bwa_align/illesztes_3.sam
+bwa mem ../BWA/PENGUIN_BWA sample_4.fq > bwa_align/illesztes_4.sam
+
+#cd bwa_align
+samtools view -Sb -f 4 illesztes_1.sam > illesztes_1_nincs.bam
+samtools view -Sb -f 4 illesztes_2.sam > illesztes_2_nincs.bam
+samtools view -Sb -f 4 illesztes_3.sam > illesztes_3_nincs.bam
+samtools view -Sb -f 4 illesztes_4.sam > illesztes_4_nincs.bam
+
+samtools bam2fq illesztes_1_nincs.bam > illesztes_1_nincs.fq
+samtools bam2fq illesztes_2_nincs.bam > illesztes_2_nincs.fq
+samtools bam2fq illesztes_3_nincs.bam > illesztes_3_nincs.fq
+samtools bam2fq illesztes_4_nincs.bam > illesztes_4_nincs.fq
+
+#BOWTIE2
+%%bash
+export PATH=$PATH:/data/tools/bowtie2-2.3.5-linux-x86_64
+     
+for f in sample*.fq
+do
+  bam=${f/'.fq'/'.bam'}
+  o=${bam/'.bam'/'_no_peng.fq'}
+  bowtie2 -p 4 --very-sensitive -x ../BWT/PENGUIN_BWT $f | samtools view -Sb -f 4 > $bam
+  samtools bam2fq $bam > bwt_align/$o
+done
+
+#readszámok kimentése
+s *.fq> nopeng_s.txt
+#R
+library(ShortRead)
+
+
+txt=c()
+g=c()
+v=c()
+txt = read.delim('nopeng_s.txt',header=FALSE)
+z = nrow(txt)
+for (j in 1:z){
+    fq=readFastq(txt[j,1])
+    g = id(fq)
+    v = grep('peng',g)
+    write(length(v),'num.txt',append=TRUE)
+    }
+	
+#paired
+#a fent szereplő minőségi adatok mindegyikével külön lefuttattam
+
+export PATH=$PATH:/data/tools/bbmap
+randomreads.sh ref=../bacterium/pendodentalis.fna  out1=endo_random_paired_01_fwd.fq out2=endo_random_paired_01_rev.fq \
+paired=t \
+minlength=50 \
+maxlength=150 \
+reads=10000 \
+seed=4 \
+snprate=0.05 \
+maxsnps=3 \
+insrate=0.01 \
+maxinss=2 \
+maxinslen=4 \
+delrate=0.001 \
+maxdels=4 \
+maxdellen=4 \
+nrate=0.1 \
+maxns=10 \
+maxq=39 \
+midq=17 \
+minq=13 \
+interleaved=t
+
+#readek átnevezése
+ls *.fq> filename_p.txt
+#R
+txt=c()
+n=c()
+g=c()
+txt = read.delim('filename_p.txt',header=FALSE)
+name = read.delim('filename.txt',header=FALSE)
+z = nrow(txt)
+for (j in 1:z){
+    fq=readFastq(txt[j,1])
+    ss = as.character(id(fq))
+    n = length(ss)
+    x=c()
+    x[1]=paste0(name[j,1], '_1')
+        for (i in 2:n){
+        x[i]=paste0(name[j,1],'_',i)}
+    ss=x 
+    bs = BStringSet(ss)
+    new_fq = ShortReadQ(sread=sread(fq), quality=quality(fq), id=bs)
+    
+    writeFastq(object=new_fq,file=paste0("rename_",txt[j,1]),"a",compress=FALSE)}
+
+#összevont minták generálása
+#R
+#1.minta
+setwd("/data/kelvi1/thesis/adelie/reads/paired/peng")
+peng_f <- readFastq('rename_peng_random_paired_01_fwd.fq')
+peng_r <- readFastq('rename_peng_random_paired_01_rev.fq')
+setwd("/data/kelvi1/thesis/adelie/reads/paired/")
+bact_f <- readFastq('/data/kelvi1/thesis/adelie/reads/paired/samp_1/fwd')
+bact_r <- readFastq('/data/kelvi1/thesis/adelie/reads/paired/samp_1/rev')
+
+bact_sel_f = bact_f[rb_1]
+peng_sel_f = peng_f[rp_1]
+bact_sel_r = bact_r[rb_1]
+peng_sel_r = peng_r[rp_1]
+
+writeFastq(object=bact_sel_f,file="sample_1_pf.fq","a",compress=FALSE)
+writeFastq(object=bact_sel_r,file="sample_1_pr.fq","a",compress=FALSE)
+writeFastq(object=peng_sel_f,file="sample_1_pf.fq","a",compress=FALSE)
+writeFastq(object=peng_sel_r,file="sample_1_pr.fq","a",compress=FALSE)
+
+#2.minta
+setwd("/data/kelvi1/thesis/adelie/reads/paired/peng")
+peng_f <- readFastq('rename_peng_random_paired_02_fwd.fq')
+peng_r <- readFastq('rename_peng_random_paired_02_rev.fq')
+setwd("/data/kelvi1/thesis/adelie/reads/paired/")
+bact_f <- readFastq('/data/kelvi1/thesis/adelie/reads/paired/samp_2/fwd')
+bact_r <- readFastq('/data/kelvi1/thesis/adelie/reads/paired/samp_2/rev')
+
+bact_sel_f = bact_f[rb_2]
+peng_sel_f = peng_f[rp_2]
+bact_sel_r = bact_r[rb_2]
+peng_sel_r = peng_r[rp_2]
+
+writeFastq(object=bact_sel_f,file="sample_2_pf.fq","a",compress=FALSE)
+writeFastq(object=bact_sel_r,file="sample_2_pr.fq","a",compress=FALSE)
+writeFastq(object=peng_sel_f,file="sample_2_pf.fq","a",compress=FALSE)
+writeFastq(object=peng_sel_r,file="sample_2_pr.fq","a",compress=FALSE)
+
+#3.minta
+setwd("/data/kelvi1/thesis/adelie/reads/paired/peng")
+peng_f <- readFastq('rename_peng_random_paired_03_fwd.fq')
+peng_r <- readFastq('rename_peng_random_paired_03_rev.fq')
+setwd("/data/kelvi1/thesis/adelie/reads/paired/")
+bact_f <- readFastq('/data/kelvi1/thesis/adelie/reads/paired/samp_3/fwd')
+bact_r <- readFastq('/data/kelvi1/thesis/adelie/reads/paired/samp_3/rev')
+
+bact_sel_f = bact_f[rb_3]
+peng_sel_f = peng_f[rp_3]
+bact_sel_r = bact_r[rb_3]
+peng_sel_r = peng_r[rp_3]
+
+writeFastq(object=bact_sel_f,file="sample_3_pf.fq","a",compress=FALSE)
+writeFastq(object=bact_sel_r,file="sample_3_pr.fq","a",compress=FALSE)
+writeFastq(object=peng_sel_f,file="sample_3_pf.fq","a",compress=FALSE)
+writeFastq(object=peng_sel_r,file="sample_3_pr.fq","a",compress=FALSE)
+
+#4.minta
+setwd("/data/kelvi1/thesis/adelie/reads/paired/peng")
+peng_f <- readFastq('rename_peng_random_paired_04_fwd.fq')
+peng_r <- readFastq('rename_peng_random_paired_04_rev.fq')
+setwd("/data/kelvi1/thesis/adelie/reads/paired/")
+bact_f <- readFastq('/data/kelvi1/thesis/adelie/reads/paired/samp_4/fwd')
+bact_r <- readFastq('/data/kelvi1/thesis/adelie/reads/paired/samp_4/rev')
+
+bact_sel_f = bact_f[rb_4]
+peng_sel_f = peng_f[rp_4]
+bact_sel_r = bact_r[rb_4]
+peng_sel_r = peng_r[rp_4]
+
+writeFastq(object=bact_sel_f,file="sample_4_pf.fq","a",compress=FALSE)
+writeFastq(object=bact_sel_r,file="sample_4_pr.fq","a",compress=FALSE)
+writeFastq(object=peng_sel_f,file="sample_4_pf.fq","a",compress=FALSE)
+writeFastq(object=peng_sel_r,file="sample_4_pr.fq","a",compress=FALSE)
+
+#FastQC
+%%bash 
+
+export PATH=$PATH:/data/tools/FastQC
+
+fastqc *.fq -t 19 -o fastQC
+
+multiqc -n 'multi_qc_raw' fastQC
+
+#BWA
+export PATH=$PATH:/data/tools/bwa
+for f in *_pf.fq
+do
+  r=${f/'_pf.fq'/'_pr.fq'}
+  bam=${f/'_pf.fq'/'.bam'}
+  bwa mem ../BWA/PENGUIN_BWA $f $r | samtools view -Sb -f 4 > $bam
+  of=${bam/'.bam'/'_nohost_1.fq'}
+  or=${bam/'.bam'/'_nohost_2.fq'}  
+  ou=${bam/'.bam'/'_nohost_3.fq'}
+  os=${bam/'.bam'/'_nohost_s.fq'}
+  samtools bam2fq -N -1 $of -2 $or -s $os $bam > $ou
+done
+
+#BOWTIE2
+xport PATH=$PATH:/data/tools/bowtie2-2.3.5-linux-x86_64
+
+for f in *_pf.fq
+do
+  r=${f/'_pf.fq'/'_pr.fq'}
+  bam=${f/'_pf.fq'/'.bam'}
+  bowtie2 -p 4 --very-sensitive -x ../BWT/PENGUIN_BWT -1 $f -2 $r | samtools view -Sb -f 4 > $bam
+  of=${bam/'.bam'/'_nohost_1.fq'}
+  or=${bam/'.bam'/'_nohost_2.fq'}  
+  ou=${bam/'.bam'/'_nohost_3.fq'}
+  os=${bam/'.bam'/'_nohost_s.fq'}
+  samtools bam2fq -N -1 $of -2 $or -s $os $bam > $ou
+done
+
+#readszámok kimentése
+ls *nohost*> nopeng_ps.txt
+#R
+library(ShortRead)
+txt=c()
+g=c()
+v=c()
+txt = read.delim('nopeng_ps.txt',header=FALSE)
+z = nrow(txt)
+for (j in 1:z){
+    fq=readFastq(txt[j,1])
+    g = id(fq)
+    v = grep('peng',g)
+    write(length(v),'num_ps.txt',append=TRUE)
+    }
